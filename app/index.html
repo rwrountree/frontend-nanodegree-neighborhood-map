@@ -47,6 +47,8 @@
   <!-- Your styles -->
   <!--<link rel="stylesheet" href="styles/main.scss">-->
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+
   <style>
     html, body {
       height: 100%;
@@ -74,7 +76,7 @@
   <div class="mdl-layout__drawer">
     <header class="mdl-layout__header">
       <div class="mdl-layout__header-row">
-        <span class="mdl-layout__title">Locations</span>
+        <span class="mdl-layout__title">Pizzerias</span>
       </div>
     </header>
     <div>
@@ -85,28 +87,20 @@
         </div>
       </form>
     </div>
-    <nav class="mdl-navigation">
-      <a class="mdl-navigation__link" href="#">Hello</a>
-      <a class="mdl-navigation__link" href="#">World.</a>
-      <a class="mdl-navigation__link" href="#">How</a>
-      <a class="mdl-navigation__link" href="#">Are</a>
-      <a class="mdl-navigation__link" href="#">You?</a>
+
+    <nav class="mdl-navigation" data-bind="foreach: locations">
+      <a class="mdl-navigation__link" href="#">
+        <li class="mdl-list__item mdl-list__item--three-line">
+        <span class="mdl-list__item-primary-content">
+          <!--<i class="material-icons mdl-list__item-avatar">person</i>-->
+          <span data-bind="text: name"></span>
+          <span data-bind="text: $parent.getStreetAddress($data)" class="mdl-list__item-text-body"></span>
+        </span>
+        </li>
+      </a>
     </nav>
   </div>
-  <main class="mdl-layout__content" id="map">
-    <!--<div id="map"></div>-->
-    <script>
-      var map;
-      function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: -34.397, lng: 150.644},
-          zoom: 8
-        });
-      }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6B4Ho8hb4k0xx6lYhC_uVl944Kcju3T0&callback=initMap"
-            async defer></script>
-  </main>
+  <main class="mdl-layout__content" id="map"></main>
 </div>
 
 <!-- END ------------------------------------------------------------->
@@ -128,8 +122,83 @@
 <script src="./styles/src/layout/layout.js"></script>
 <script src="./styles/src/data-table/data-table.js"></script>
 <script src="./styles/src/ripple/ripple.js"></script>
+<script src="scripts/ko-list.js"></script>
 <script src="scripts/main.js"></script>
 <!-- endbuild -->
+
+<script>
+  // Note: This example requires that you consent to location sharing when
+  // prompted by your browser. If you see the error "The Geolocation service
+  // failed.", it means you probably did not give permission for the browser to
+  // locate you.
+
+  function initMap() {
+    var map = new google.maps.Map(document.getElementById('map'), {
+//      center: {lat: locationsModel.locations()[0].lat, lng: locationsModel.locations()[0]},
+      zoom: 11
+    });
+
+    var infoWindow = new google.maps.InfoWindow({map: map});
+    infoWindow.close();
+
+    // Try HTML5 geolocation.
+    if (navigator.geolocation) {
+      locationsModel.locations().forEach(function (elem) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          var marker = 0;
+          var markers = [];
+
+          marker = new google.maps.Marker({
+            position: {lat: elem.lat, lng: elem.lng},
+            map: map,
+            title: elem.name,
+            draggable: false,
+            animation: google.maps.Animation.DROP
+          });
+
+          function toggleBounce() {
+            if (marker.getAnimation() != null) {
+              marker.setAnimation(null);
+            } else {
+              marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+          }
+
+          google.maps.event.addListener(marker, 'click', function () {
+            toggleBounce();
+            infoWindow.setContent(elem.name);
+            infoWindow.open(map, marker);
+            setTimeout(toggleBounce, 2850);
+          });
+
+          markers.push(marker);
+
+
+          // infoWindow.setPosition(marker.position);
+          // infoWindow.setContent('Location found.');
+          map.setCenter(marker.position);
+        });
+      }, function () {
+        infoWindow.open();
+        handleLocationError(true, infoWindow, map.getCenter());
+      });
+    } else {
+      // Browser doesn't support Geolocation
+      infoWindow().open();
+      handleLocationError(false, infoWindow, map.getCenter());
+    }
+  }
+
+  function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+    infoWindow.setPosition(pos);
+    infoWindow.setContent(browserHasGeolocation ?
+      'Error: The Geolocation service failed.' :
+      'Error: Your browser doesn\'t support geolocation.');
+  }
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6B4Ho8hb4k0xx6lYhC_uVl944Kcju3T0&callback=initMap">
+</script>
 
 <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
 <script>
