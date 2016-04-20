@@ -11,7 +11,6 @@ function APP() { // eslint-disable-line no-unused-vars
   self.venues = ko.observableArray();
   self.markers = [];
   self.infoWindow = null;
-  self.currentVenue = ko.observable();
   self.venuesData = [
     {
       name: 'Di Fara Pizza',
@@ -79,6 +78,7 @@ function APP() { // eslint-disable-line no-unused-vars
       }
     }
   ];
+  self.currentVenue = ko.observable(new Venue(self.venuesData[0]));
 
   function initializeMap(elementId) {
     var index;
@@ -90,28 +90,38 @@ function APP() { // eslint-disable-line no-unused-vars
     self.infoWindow = new google.maps.InfoWindow({map: self.map});
     self.infoWindow.close();
 
+    google.maps.InfoWindow.prototype.isOpen = function () {
+      var map = self.infoWindow.getMap();
+      return (map !== null && typeof map !== 'undefined');
+    };
+
     for (index = 0; index < self.venuesData.length; index++) {
       self.venues.push(new Venue(self.venuesData[index]));
     }
 
     self.map.setCenter(self.venues()[0].location);
+    // self.selectVenue(self.venues()[0]);
   }
 
-  self.selectVenue = function (selectedVenue) { // eslint-disable-line no-unused-vars
+  self.selectVenue = function (selectedVenue) {
     var index;
     var venue;
     var numberOfVenues = self.venues().length;
 
     if (selectedVenue === self.currentVenue) {
+      if (self.infoWindow.isOpen() === false) {
+        setInfoWindow(selectedVenue.marker, selectedVenue.name);
+      }
+
       return;
     }
 
-    self.currentVenue = selectedVenue;
+    self.currentVenue(selectedVenue);
 
     for (index = 0; index < numberOfVenues; index++) {
       venue = self.venues()[index];
 
-      if (self.currentVenue === venue) {
+      if (self.currentVenue() === venue) {
         clearMapMarkerAnimations(venue.marker);
 
         if (venue.marker.getAnimation() !== google.maps.Animation.BOUNCE) {
@@ -163,6 +173,10 @@ function APP() { // eslint-disable-line no-unused-vars
 
     return marker;
   }
+
+  self.isSelected = function (venue) {
+    return (self.currentVenue() === venue);
+  };
 
   function Venue(venue) {
     this.location = {lat: venue.location.lat, lng: venue.location.lng};
