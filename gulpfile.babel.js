@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /**
  *
  *  Web Starter Kit
@@ -129,8 +131,9 @@ gulp.task('scripts', () =>
       './app/styles/src/data-table/data-table.js',
       // And finally, the ripples
       './app/styles/src/ripple/ripple.js',
-      // Other scripts,
-      './app/scripts/main.js'      
+      // Other scripts
+      './app/scripts/app.js',
+      './app/scripts/main.js'
     ])
     .pipe($.newer('.tmp/scripts'))
     .pipe($.sourcemaps.init())

@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
+  <title>NYC Pizzerias</title>
 
   <!-- Disable tap highlight on IE -->
   <meta name="msapplication-tap-highlight" content="no">
@@ -36,18 +36,12 @@
   <link rel="canonical" href="http://www.example.com/">
   -->
 
-  <!--<link rel="stylesheet" href="styles/main.scss">-->
-
   <!-- Material Design icons -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-  <!--<link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.cyan-light_blue.min.css">-->
-  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.brown-blue.min.css"/>
-
   <!-- Your styles -->
-  <!--<link rel="stylesheet" href="styles/main.scss">-->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+  <!--<link rel="stylesheet" href="styles/main.css">-->
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.brown-blue.min.css"/>
 
   <style>
     html, body {
@@ -56,51 +50,57 @@
       padding: 0;
     }
 
-    #map {
+    map {
       height: 100%;
     }
+
+    /*.mdl-layout__header-row span.mdl-layout-title {*/
+    /*color: #ffb648;*/
+    /*text-transform: uppercase;*/
+    /*}*/
   </style>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
 </head>
-<body>
+<body onload="init()">
 <!-- Add your site or app content here -->
 
 <!-- BEGIN ------------------------------------------------------------->
 
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
+<!-- Always shows a header, even in smaller screens. -->
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
-      <span class="mdl-layout__title">Neighborhood Map</span>
+      <!-- Add spacer, to align title to the right -->
+      <div class="mdl-layout-spacer"></div>
+      <!-- Title -->
+      <span class="mdl-layout-title">NYC Pizzerias</span>
     </div>
   </header>
   <div class="mdl-layout__drawer">
-    <header class="mdl-layout__header">
-      <div class="mdl-layout__header-row">
-        <span class="mdl-layout__title">Pizzerias</span>
-      </div>
-    </header>
-    <div>
-      <form action="#">
-        <div class="mdl-textfield mdl-js-textfield">
-          <input class="mdl-textfield__input" type="text" id="sample1">
-          <label class="mdl-textfield__label" for="sample1">Filter</label>
-        </div>
-      </form>
+    <div class="mdl-layout__header-row">
+      <span class="mdl-layout-title">Locations</span>
     </div>
 
-    <nav class="mdl-navigation" data-bind="foreach: locations">
-      <a class="mdl-navigation__link" href="#">
-        <li class="mdl-list__item mdl-list__item--three-line">
-        <span class="mdl-list__item-primary-content">
-          <!--<i class="material-icons mdl-list__item-avatar">person</i>-->
-          <span data-bind="text: name"></span>
-          <span data-bind="text: $parent.getStreetAddress($data)" class="mdl-list__item-text-body"></span>
-        </span>
-        </li>
-      </a>
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+      <label class="mdl-button mdl-js-button mdl-button--icon" for="search-expandable">
+        <i class="material-icons">filter_list</i>
+      </label>
+      <div class="mdl-textfield__expandable-holder">
+        <input class="mdl-textfield__input" type="text" id="search-expandable">
+        <label class="mdl-textfield__label" for="search-expandable">Filter</label>
+      </div>
+    </div>
+
+    <nav class="mdl-navigation">
+      <div data-bind="foreach: venues">
+        <a data-bind="text: name, click: $parent.selectVenue" class="mdl-navigation__link" href="#"></a>
+      </div>
     </nav>
   </div>
-  <main class="mdl-layout__content" id="map"></main>
+  <main class="mdl-layout__content" id="map">
+  </main>
 </div>
 
 <!-- END ------------------------------------------------------------->
@@ -122,82 +122,24 @@
 <script src="./styles/src/layout/layout.js"></script>
 <script src="./styles/src/data-table/data-table.js"></script>
 <script src="./styles/src/ripple/ripple.js"></script>
-<script src="scripts/ko-list.js"></script>
+<script src="scripts/app.js"></script>
 <script src="scripts/main.js"></script>
 <!-- endbuild -->
 
-<script>
-  // Note: This example requires that you consent to location sharing when
-  // prompted by your browser. If you see the error "The Geolocation service
-  // failed.", it means you probably did not give permission for the browser to
-  // locate you.
+<!--<script async defer-->
+        <!--src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6B4Ho8hb4k0xx6lYhC_uVl944Kcju3T0&callback=initMap">-->
+<!--</script>-->
 
-  function initMap() {
-    var map = new google.maps.Map(document.getElementById('map'), {
-//      center: {lat: locationsModel.locations()[0].lat, lng: locationsModel.locations()[0]},
-      zoom: 11
-    });
-
-    var infoWindow = new google.maps.InfoWindow({map: map});
-    infoWindow.close();
-
-    // Try HTML5 geolocation.
-    if (navigator.geolocation) {
-      locationsModel.locations().forEach(function (elem) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-          var marker = 0;
-          var markers = [];
-
-          marker = new google.maps.Marker({
-            position: {lat: elem.lat, lng: elem.lng},
-            map: map,
-            title: elem.name,
-            draggable: false,
-            animation: google.maps.Animation.DROP
-          });
-
-          function toggleBounce() {
-            if (marker.getAnimation() != null) {
-              marker.setAnimation(null);
-            } else {
-              marker.setAnimation(google.maps.Animation.BOUNCE);
-            }
-          }
-
-          google.maps.event.addListener(marker, 'click', function () {
-            toggleBounce();
-            infoWindow.setContent(elem.name);
-            infoWindow.open(map, marker);
-            setTimeout(toggleBounce, 2850);
-          });
-
-          markers.push(marker);
-
-
-          // infoWindow.setPosition(marker.position);
-          // infoWindow.setContent('Location found.');
-          map.setCenter(marker.position);
-        });
-      }, function () {
-        infoWindow.open();
-        handleLocationError(true, infoWindow, map.getCenter());
-      });
-    } else {
-      // Browser doesn't support Geolocation
-      infoWindow().open();
-      handleLocationError(false, infoWindow, map.getCenter());
-    }
-  }
-
-  function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-    infoWindow.setPosition(pos);
-    infoWindow.setContent(browserHasGeolocation ?
-      'Error: The Geolocation service failed.' :
-      'Error: Your browser doesn\'t support geolocation.');
-  }
-</script>
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6B4Ho8hb4k0xx6lYhC_uVl944Kcju3T0&callback=initMap">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6B4Ho8hb4k0xx6lYhC_uVl944Kcju3T0">
+</script>
+
+<script>
+  function init() {
+    var app = new APP();
+    app.initialize('map', document);
+    ko.applyBindings(app);
+  }
 </script>
 
 <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
