@@ -38,8 +38,12 @@
   },
   "eslintConfig": {
     "extends": "google",
+    "rules": {
+      "space-before-function-paren": 0
+    },
     "globals": {
-      "ko": true
+      "ko": true,
+      "google": true
     }
   }
 }

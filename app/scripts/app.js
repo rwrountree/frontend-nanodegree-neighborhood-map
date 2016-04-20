@@ -6,6 +6,7 @@
 
 function APP() { // eslint-disable-line no-unused-vars
   var self = this;
+  self.document = null;
   self.map = null;
   self.venues = ko.observableArray();
   self.markers = [];
@@ -82,7 +83,7 @@ function APP() { // eslint-disable-line no-unused-vars
   function initializeMap(elementId) {
     var index;
 
-    self.map = new google.maps.Map(document.getElementById(elementId), {
+    self.map = new google.maps.Map(self.document.getElementById(elementId), {
       disableDefaultUI: true,
       zoom: 11
     });
@@ -169,7 +170,8 @@ function APP() { // eslint-disable-line no-unused-vars
     this.marker = addMapMarker(this);
   }
 
-  self.initialize = function (elementId) {
+  self.initialize = function (elementId, document) {
+    self.document = document;
     initializeMap(elementId);
   };
 }
