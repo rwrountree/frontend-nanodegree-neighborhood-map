@@ -131,6 +131,8 @@ gulp.task('scripts', () =>
       './app/styles/src/data-table/data-table.js',
       // And finally, the ripples
       './app/styles/src/ripple/ripple.js',
+      // Polymer elements
+      './app/styles/bower_components/webcomponentsjs/webcomponents-lite.js',
       // Other scripts
       './app/scripts/app.js',
       './app/scripts/main.js'
