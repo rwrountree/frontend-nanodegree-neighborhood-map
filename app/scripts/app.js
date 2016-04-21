@@ -4,13 +4,15 @@
 
 'use strict';
 
-function APP() { // eslint-disable-line no-unused-vars
+function MapApp() { // eslint-disable-line no-unused-vars
   var self = this;
   self.document = null;
   self.map = null;
   self.venues = ko.observableArray();
+  self.currentVenue = ko.observable();
   self.markers = [];
   self.infoWindow = null;
+
   self.venuesData = [
     {
       name: 'Di Fara Pizza',
@@ -78,11 +80,8 @@ function APP() { // eslint-disable-line no-unused-vars
       }
     }
   ];
-  self.currentVenue = ko.observable(new Venue(self.venuesData[0]));
 
   function initializeMap(elementId) {
-    var index;
-
     self.map = new google.maps.Map(self.document.getElementById(elementId), {
       disableDefaultUI: true,
       zoom: 11
@@ -90,17 +89,11 @@ function APP() { // eslint-disable-line no-unused-vars
     self.infoWindow = new google.maps.InfoWindow({map: self.map});
     self.infoWindow.close();
 
-    google.maps.InfoWindow.prototype.isOpen = function () {
-      var map = self.infoWindow.getMap();
-      return (map !== null && typeof map !== 'undefined');
-    };
-
-    for (index = 0; index < self.venuesData.length; index++) {
-      self.venues.push(new Venue(self.venuesData[index]));
-    }
+    self.venuesData.forEach(function (venue) {
+      self.venues.push(new Venue(venue));
+    });
 
     self.map.setCenter(self.venues()[0].location);
-    // self.selectVenue(self.venues()[0]);
   }
 
   self.selectVenue = function (selectedVenue) {
@@ -109,8 +102,8 @@ function APP() { // eslint-disable-line no-unused-vars
     var numberOfVenues = self.venues().length;
 
     if (selectedVenue === self.currentVenue) {
-      if (self.infoWindow.isOpen() === false) {
-        setInfoWindow(selectedVenue.marker, selectedVenue.name);
+      if (isInfoWindowOpen()) {
+        updateInfoWindow(selectedVenue.marker, selectedVenue.name);
       }
 
       return;
@@ -128,14 +121,19 @@ function APP() { // eslint-disable-line no-unused-vars
           toggleBounce(venue.marker);
         }
 
-        setInfoWindow(venue.marker, venue.name);
+        updateInfoWindow(venue.marker, venue.name);
 
         break;
       }
     }
   };
 
-  function setInfoWindow(marker, info) {
+  function isInfoWindowOpen() {
+    var map = self.infoWindow.getMap();
+    return (map !== null && typeof map !== 'undefined');
+  }
+
+  function updateInfoWindow(marker, info) {
     self.infoWindow.setContent(info);
     self.infoWindow.open(self.map, marker);
   }
