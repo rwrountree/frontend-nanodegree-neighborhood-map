@@ -54,10 +54,9 @@
     }
   </style>
 
-  <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+  <script src="./styles/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 
-  <!--<script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>-->
   <link rel="import" href="./styles/bower_components/iron-ajax/iron-ajax.html">
   <link rel="import" href="./styles/bower_components/iron-ajax/iron-request.html">
 </head>
@@ -66,33 +65,8 @@
 
 <!-- BEGIN ------------------------------------------------------------->
 
-<!--<iron-ajax-->
-  <!--auto-->
-  <!--url="http://gdata.youtube.com/feeds/api/videos/"-->
-  <!--params='{"alt":"json", "q":"chrome"}'-->
-  <!--handle-as="json"-->
-  <!--on-response="handleResponse"-->
-  <!--debounce-duration="300">-->
-<!--</iron-ajax>-->
-
-<!-- Always shows a header, even in smaller screens. -->
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer">
-
-  <!--<template is="dom-bind" id="app">-->
-    <!--<iron-ajax auto-->
-               <!--url="https://www.googleapis.com/youtube/v3/search"-->
-               <!--params='{"part":"snippet", "q":"polymer", "key": "AIzaSyAuecFZ9xJXbGDkQYWBmYrtzOGJD-iDIgI", "type": "video"}'-->
-               <!--handle-as="json"-->
-               <!--last-response="{{ajaxResponse}}"></iron-ajax>-->
-
-    <!--<template is="dom-repeat" items="[[ajaxResponse.items]]">-->
-      <!--<div class="horizontal-section">-->
-        <!--<h2><a href="[[url(item.id.videoId)]]" target="_blank">[[item.snippet.title]]</a></h2>-->
-        <!--<iron-image src="[[item.snippet.thumbnails.high.url]]" width="256" height="256" sizing="cover" preload fade></iron-image>-->
-        <!--<p>[[item.snippet.description]]</p>-->
-      <!--</div>-->
-    <!--</template>-->
-  <!--</template>-->
+  <iron-ajax id="ajaxRequestFoursquare"></iron-ajax>
 
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
@@ -106,6 +80,20 @@
     <div class="mdl-layout__header-row">
       <span class="mdl-layout-title">Locations</span>
     </div>
+
+    <!--<template is="dom-bind" id="app">-->
+    <!--<iron-ajax auto-->
+    <!--url="https://api.foursquare.com/v2/venues/search"-->
+    <!--params='{"client_id": "DM04OKNQOAEBGPW5UNEZCM2SG2JKZM4NYPO5FX1GN4G15BT0", "client_secret": "DMODPKCJKQ2YQTNSBR2AQEENVUT30M2RMFSXSZI5YGPB5LNF", "v": "20130815", "ll": "40.6249522,-73.96150369999999", "query": "di fara pizza"}'-->
+    <!--handle-as="json"-->
+    <!--last-response="{{ajaxResponse}}"></iron-ajax>-->
+
+    <!--<template is="dom-repeat" items="[[ajaxResponse.response.venues]]">-->
+    <!--<div class="horizontal-section">-->
+    <!--<h2>[[item.name]]</h2>-->
+    <!--</div>-->
+    <!--</template>-->
+    <!--</template>-->
 
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
       <label class="mdl-button mdl-js-button mdl-button--icon" for="search-expandable">
@@ -147,7 +135,6 @@
 <script src="./styles/src/layout/layout.js"></script>
 <script src="./styles/src/data-table/data-table.js"></script>
 <script src="./styles/src/ripple/ripple.js"></script>
-<script src="./styles/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 <script src="scripts/app.js"></script>
 <script src="scripts/main.js"></script>
 <!-- endbuild -->
@@ -155,13 +142,6 @@
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6B4Ho8hb4k0xx6lYhC_uVl944Kcju3T0">
 </script>
-
-<!--<script>-->
-  <!--var app = document.querySelector('#app');-->
-  <!--app.url = function (videoId) {-->
-    <!--return 'https://www.youtube.com/watch?v=' + videoId;-->
-  <!--};-->
-<!--</script>-->
 
 <script>
   function init() {

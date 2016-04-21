@@ -70,6 +70,14 @@ gulp.task('copy', () =>
     .pipe($.size({title: 'copy'}))
 );
 
+gulp.task('copy-bower-components', () =>
+  gulp.src([
+      'app/styles/bower_components/**/**.{html,js}'
+    ])
+    .pipe(gulp.dest('dist/styles/bower_components'))
+    .pipe($.size({title: 'copy-bower-components'}))
+);
+
 // Compile and automatically prefix stylesheets
 gulp.task('styles', () => {
   const AUTOPREFIXER_BROWSERS = [
@@ -131,8 +139,6 @@ gulp.task('scripts', () =>
       './app/styles/src/data-table/data-table.js',
       // And finally, the ripples
       './app/styles/src/ripple/ripple.js',
-      // Polymer elements
-      './app/styles/bower_components/webcomponentsjs/webcomponents-lite.js',
       // Other scripts
       './app/scripts/app.js',
       './app/scripts/main.js'
@@ -229,7 +235,7 @@ gulp.task('serve:dist', ['default'], () =>
 gulp.task('default', ['clean'], cb =>
   runSequence(
     'styles',
-    ['lint', 'html', 'scripts', 'images', 'copy'],
+    ['lint', 'html', 'scripts', 'images', 'copy', 'copy-bower-components'],
     'generate-service-worker',
     cb
   )
