@@ -1,0 +1,21 @@
+{
+  "name": "Polymer Elements",
+  "homepage": "https://github.com/rwrountree/frontend-nanodegree-neighborhood-map",
+  "authors": [
+    "Rusty Rountree <rustonrountree@gmail.com>"
+  ],
+  "description": "Polymer elements used in this project",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "iron-ajax": "PolymerElements/iron-ajax#^1.2.0"
+  }
+}
