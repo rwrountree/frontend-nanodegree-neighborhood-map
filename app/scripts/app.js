@@ -14,6 +14,25 @@ function MapApp() { // eslint-disable-line no-unused-vars
   self.markers = [];
   self.infoWindow = null;
   self.ironAjax = null;
+  self.filterQuery = ko.observable('');
+  self.filterQuery.subscribe(filterVenues);
+
+  function filterVenues() {
+    var venueName;
+    var search = self.filterQuery().toLowerCase();
+
+    self.venues().forEach(function (venue) {
+      venueName = venue.name.toLowerCase();
+
+      if (venueName.indexOf(search) >= 0) {
+        venue.visible(true);
+        venue.marker.setMap(self.map);
+      } else {
+        venue.visible(false);
+        venue.marker.setMap(null);
+      }
+    });
+  }
 
   function initializeMap(elementId) {
     self.map = new google.maps.Map(self.document.getElementById(elementId), {
@@ -105,9 +124,12 @@ function MapApp() { // eslint-disable-line no-unused-vars
   };
 
   function Venue(venue) {
-    this.location = {lat: venue.location.lat, lng: venue.location.lng};
-    this.name = venue.name;
-    this.marker = addMapMarker(this);
+    var self = this;
+
+    self.location = {lat: venue.location.lat, lng: venue.location.lng};
+    self.name = venue.name;
+    self.marker = addMapMarker(self);
+    self.visible = ko.observable(true);
   }
 
   // var foursquareVenues = null;
