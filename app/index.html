@@ -89,7 +89,7 @@
         <i class="material-icons">filter_list</i>
       </label>
       <div class="mdl-textfield__expandable-holder">
-        <input class="mdl-textfield__input" type="text" id="search-expandable">
+        <input data-bind="value: filterQuery, valueUpdate: 'afterkeydown'" class="mdl-textfield__input" type="text" id="search-expandable">
         <label class="mdl-textfield__label" for="search-expandable">Filter</label>
       </div>
     </div>
@@ -98,6 +98,7 @@
       <div data-bind="foreach: venues">
         <a data-bind="text: name,
                       click: $root.selectVenue,
+                      visible: visible,
                       css: {'venue-selected': $root.isSelected($data)}"
            class="mdl-navigation__link" href=""></a>
       </div>
