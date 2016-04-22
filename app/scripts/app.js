@@ -6,80 +6,14 @@
 
 function MapApp() { // eslint-disable-line no-unused-vars
   var self = this;
+  self.window = null;
   self.document = null;
   self.map = null;
   self.venues = ko.observableArray();
   self.currentVenue = ko.observable();
   self.markers = [];
   self.infoWindow = null;
-
-  self.venuesData = [
-    {
-      name: 'Di Fara Pizza',
-      address: {
-        street: '1424 Ave. J',
-        city: 'Brooklyn',
-        state: 'NY',
-        zip: '11230'
-      },
-      location: {
-        lat: 40.6249522,
-        lng: -73.96150369999999
-      }
-    },
-    {
-      name: 'Totonno Pizzeria Napolitano',
-      address: {
-        street: '1524 Neptune Ave.',
-        city: 'Brooklyn',
-        state: 'NY',
-        zip: '11224'
-      },
-      location: {
-        lat: 40.5788592,
-        lng: -73.9838182
-      }
-    },
-    {
-      name: 'Best Pizza',
-      address: {
-        street: '33 Havemeyer St.',
-        city: 'Brooklyn',
-        state: 'NY',
-        zip: '11211'
-      },
-      location: {
-        lat: 40.7155882,
-        lng: -73.9534882
-      }
-    },
-    {
-      name: 'Joe & Pat\'s',
-      address: {
-        street: '1758 Victory Blvd.',
-        city: 'Staten Island',
-        state: 'NY',
-        zip: '10314'
-      },
-      location: {
-        lat: 40.6129407,
-        lng: -74.12209729999999
-      }
-    },
-    {
-      name: 'Roberta\'s Pizza',
-      address: {
-        street: '261 Moore St.',
-        city: 'Brooklyn',
-        state: 'NY',
-        zip: '11206'
-      },
-      location: {
-        lat: 40.7050888,
-        lng: -73.9335849
-      }
-    }
-  ];
+  self.ironAjax = null;
 
   function initializeMap(elementId) {
     self.map = new google.maps.Map(self.document.getElementById(elementId), {
@@ -88,12 +22,6 @@ function MapApp() { // eslint-disable-line no-unused-vars
     });
     self.infoWindow = new google.maps.InfoWindow({map: self.map});
     self.infoWindow.close();
-
-    self.venuesData.forEach(function (venue) {
-      self.venues.push(new Venue(venue));
-    });
-
-    self.map.setCenter(self.venues()[0].location);
   }
 
   self.selectVenue = function (selectedVenue) {
@@ -182,8 +110,49 @@ function MapApp() { // eslint-disable-line no-unused-vars
     this.marker = addMapMarker(this);
   }
 
-  self.initialize = function (elementId, document) {
+  // var foursquareVenues = null;
+  var foursquareRequest = {
+    url: 'https://api.foursquare.com/v2/venues/search',
+    params: { // eslint-disable-line quote-props
+      'client_id': 'DM04OKNQOAEBGPW5UNEZCM2SG2JKZM4NYPO5FX1GN4G15BT0',
+      'client_secret': 'DMODPKCJKQ2YQTNSBR2AQEENVUT30M2RMFSXSZI5YGPB5LNF',
+      'v': '20130815',
+      'll': '40.6249522,-73.96150369999999',
+      'query': 'pizza',
+      'limit': '50'
+    }
+  };
+
+  self.initialize = function (elementId, window, document, ironAjax) {
+    self.window = window;
     self.document = document;
+    self.ironAjax = ironAjax;
+
+    // self.ironAjax.addEventListener('request', function (e) { // eslint-disable-line no-unused-vars
+    //   self.ironAjax.lastResponse.response.venues;
+    // });
+
+    self.ironAjax.addEventListener('response', function (e) { // eslint-disable-line no-unused-vars
+      var responseVenues = self.ironAjax.lastResponse.response.venues;
+
+      responseVenues.forEach(function (venue) {
+        self.venues.push(new Venue(venue));
+      });
+
+      if (responseVenues.length) {
+        self.map.setCenter(responseVenues[0].location);
+      }
+    });
+
+    self.ironAjax.addEventListener('error', function (e) { // eslint-disable-line no-unused-vars
+      console.log('AJAX Request Failed!');
+    });
+
+    ironAjax.url = foursquareRequest.url;
+    ironAjax.params = foursquareRequest.params;
+
+    self.ironAjax.generateRequest();
     initializeMap(elementId);
+    ko.applyBindings(self);
   };
 }
