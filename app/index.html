@@ -60,14 +60,17 @@
   <link rel="import" href="./styles/bower_components/iron-ajax/iron-ajax.html">
   <link rel="import" href="./styles/bower_components/iron-ajax/iron-request.html">
 </head>
-<body onload="init()">
+<body onload="onLoad()">
 <!-- Add your site or app content here -->
 
 <!-- BEGIN ------------------------------------------------------------->
 
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer">
-  <iron-ajax id="ajaxRequestFoursquare"></iron-ajax>
+<template is="dom-bind">
+  <iron-ajax id="ajaxData"
+             handle-as="json"></iron-ajax>
+</template>
 
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
       <!-- Add spacer, to align title to the right -->
@@ -81,20 +84,6 @@
       <span class="mdl-layout-title">Locations</span>
     </div>
 
-    <!--<template is="dom-bind" id="app">-->
-    <!--<iron-ajax auto-->
-    <!--url="https://api.foursquare.com/v2/venues/search"-->
-    <!--params='{"client_id": "DM04OKNQOAEBGPW5UNEZCM2SG2JKZM4NYPO5FX1GN4G15BT0", "client_secret": "DMODPKCJKQ2YQTNSBR2AQEENVUT30M2RMFSXSZI5YGPB5LNF", "v": "20130815", "ll": "40.6249522,-73.96150369999999", "query": "di fara pizza"}'-->
-    <!--handle-as="json"-->
-    <!--last-response="{{ajaxResponse}}"></iron-ajax>-->
-
-    <!--<template is="dom-repeat" items="[[ajaxResponse.response.venues]]">-->
-    <!--<div class="horizontal-section">-->
-    <!--<h2>[[item.name]]</h2>-->
-    <!--</div>-->
-    <!--</template>-->
-    <!--</template>-->
-
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
       <label class="mdl-button mdl-js-button mdl-button--icon" for="search-expandable">
         <i class="material-icons">filter_list</i>
@@ -107,7 +96,9 @@
 
     <nav class="mdl-navigation">
       <div data-bind="foreach: venues">
-        <a data-bind="text: name, click: $root.selectVenue, css: { 'venue-selected': $root.isSelected($data) }"
+        <a data-bind="text: name,
+                      click: $root.selectVenue,
+                      css: {'venue-selected': $root.isSelected($data)}"
            class="mdl-navigation__link" href=""></a>
       </div>
     </nav>
@@ -144,10 +135,15 @@
 </script>
 
 <script>
-  function init() {
+  function onLoad() {
     var app = new MapApp();
-    app.initialize('map', document);
-    ko.applyBindings(app);
+
+    app.initialize(
+      'map',
+      window,
+      document,
+      document.querySelector('#ajaxData')
+    );
   }
 </script>
 
