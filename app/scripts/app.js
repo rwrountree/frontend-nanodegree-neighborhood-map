@@ -170,7 +170,13 @@ function MapApp() { // eslint-disable-line no-unused-vars
     });
 
     self.ironAjax.addEventListener('error', function (e) { // eslint-disable-line no-unused-vars
-      console.log('AJAX Request Failed!');
+      self.window.alert(
+        'Foursquare data could not be retrieved.' +
+        '\nStatus: ' +
+        e.detail.request.status +
+        '\nStatus Text: ' +
+        e.detail.request.statusText
+      );
     });
 
     ironAjax.url = foursquareRequest.url;
