@@ -48,6 +48,7 @@
       height: 100%;
     }
 
+    /* highlight selected list items */
     .venue-selected {
       background-color: #e0e0e0;
       font-weight: bold;
@@ -65,25 +66,29 @@
 
 <!-- BEGIN ------------------------------------------------------------->
 
+<!-- Polymer's iron-ajax template to handle AJAX requests -->
 <template is="dom-bind">
   <iron-ajax id="ajaxData"
              handle-as="json"></iron-ajax>
 </template>
 
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer">
+  <!-- page header that is fixed and always visible, regardless of device -->
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
       <!-- Add spacer, to align title to the right -->
       <div class="mdl-layout-spacer"></div>
       <!-- Title -->
-      <span class="mdl-layout-title">NYC Pizzerias</span>
+      <span class="mdl-layout-title">20 NYC Pizzerias</span>
     </div>
   </header>
+  <!-- drawer for venues list -->
   <div class="mdl-layout__drawer">
     <div class="mdl-layout__header-row">
       <span class="mdl-layout-title">Locations</span>
     </div>
 
+    <!-- text input widget for venues filter -->
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
       <label class="mdl-button mdl-js-button mdl-button--icon" for="search-expandable">
         <i class="material-icons">filter_list</i>
@@ -95,6 +100,7 @@
       </div>
     </div>
 
+    <!-- the list items with knockout bindings -->
     <nav class="mdl-navigation">
       <div data-bind="foreach: venues">
         <a data-bind="text: name,
