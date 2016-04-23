@@ -9,6 +9,7 @@ function MapApp() { // eslint-disable-line no-unused-vars
   self.window = null;
   self.document = null;
   self.map = null;
+  self.bounds = new google.maps.LatLngBounds();
   self.venues = ko.observableArray();
   self.currentVenue = ko.observable();
   self.markers = [];
@@ -110,6 +111,9 @@ function MapApp() { // eslint-disable-line no-unused-vars
       animation: google.maps.Animation.DROP
     });
 
+    self.bounds.extend(marker.position);
+    self.map.fitBounds(self.bounds);
+
     google.maps.event.addListener(marker, 'click', function () { // eslint-disable-line no-loop-func
       self.selectVenue(venue);
     });
@@ -132,7 +136,6 @@ function MapApp() { // eslint-disable-line no-unused-vars
     self.visible = ko.observable(true);
   }
 
-  // var foursquareVenues = null;
   var foursquareRequest = {
     url: 'https://api.foursquare.com/v2/venues/search',
     params: { // eslint-disable-line quote-props
@@ -141,7 +144,7 @@ function MapApp() { // eslint-disable-line no-unused-vars
       'v': '20130815',
       'll': '40.6249522,-73.96150369999999',
       'query': 'pizza',
-      'limit': '50'
+      'limit': '20'
     }
   };
 
@@ -162,7 +165,7 @@ function MapApp() { // eslint-disable-line no-unused-vars
       });
 
       if (responseVenues.length) {
-        self.map.setCenter(responseVenues[0].location);
+        self.map.setCenter(self.bounds.getCenter());
       }
     });
 
