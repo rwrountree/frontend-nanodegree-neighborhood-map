@@ -1,8 +1,8 @@
 *.map
 /.idea
 node_modules
-#dist/
-.tmp
+
+#.tmp
 app.yaml
 ### OSX template
 .DS_Store
