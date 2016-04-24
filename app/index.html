@@ -138,8 +138,15 @@
 <script src="./scripts/main.js"></script>
 <!-- endbuild -->
 
+<script>
+  function googleError() {
+    alert("Google Maps API failed to load!");
+  }
+</script>
+
 <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6B4Ho8hb4k0xx6lYhC_uVl944Kcju3T0">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6B4Ho8hb4k0xx6lYhC_uVl944Kcju3T0"
+        onerror="googleError()">
 </script>
 
 <script>
