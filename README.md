@@ -30,7 +30,7 @@ Once you have verified that your system can run WSK, check out the [commands](do
 
 ## Neighborhood Map Demo
 
-View the optimized demonstration of the [Neighborhood Map app](rwrountree.github.io/frontend-nanodegree-neighborhood-map/dist/index.html). 
+View the optimized demonstration of the [Neighborhood Map app](https://rwrountree.github.io/frontend-nanodegree-neighborhood-map/dist/index.html). 
 
 ## Troubleshooting
 
